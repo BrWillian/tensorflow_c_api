@@ -3,8 +3,9 @@
 int main()
 {
 
-    ClassTensorflow *obj = new ClassTensorflow;
+    std::string modelPath = "./saved_model";
 
-    obj->LoadModel("Teste");
+    ClassTensorflow network;
+    network.LoadGraph(modelPath.c_str());
 
 }

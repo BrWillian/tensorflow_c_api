@@ -27,4 +27,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    classtensorflow.h
+    classtensorflow.h \
+    tag_constants.h

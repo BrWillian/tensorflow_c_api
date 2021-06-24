@@ -1,5 +1,6 @@
 #include "classtensorflow.h"
 #include <tensorflow/c/c_api.h>
+#include <opencv2/core/core.hpp>
 #include <iostream>
 #include <fstream>
 
@@ -7,8 +8,25 @@ ClassTensorflow::ClassTensorflow()
 {
 
 }
-void ClassTensorflow::LoadModel(const char* modelPath)
+void ClassTensorflow::LoadGraph(const char *modelPath)
 {
+    graph = TF_NewGraph();
+    TF_Status* Status = TF_NewStatus();
+    TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
+    TF_Buffer* RunOpts = nullptr;
+
+    const char* tags[] = {tensorflow::kSavedModelTagServe};
+
+    session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, modelPath, tags, 1, graph, nullptr, Status);
+
+    if (TF_GetCode(Status) == TF_OK){
+        std::cout<<"Tensorflow model loaded...."<<std::endl;
+    }else {
+        std::cout<<TF_Message(Status);
+    }
+
+    TF_DeleteSessionOptions(SessionOpts);
+    TF_DeleteStatus(Status);
 
 }
 TF_Buffer* ClassTensorflow::ReadBufferFromFile(const char* file)
@@ -38,4 +56,24 @@ TF_Buffer* ClassTensorflow::ReadBufferFromFile(const char* file)
     buf->length = fsize;
     buf->data_deallocator = DeallocateBuffer;
     return buf;
+}
+void ClassTensorflow::DeallocateBuffer(void *data, size_t)
+{
+    std::free(data);
+}
+void ClassTensorflow::Deallocator(void *data, size_t lenght, void *arg){
+    std::cout<<"Dellocation of the input tensor"<<std::endl;
+    std::free(data);
+    data = nullptr;
+}
+ClassTensorflow::~ClassTensorflow()
+{
+    TF_DeleteGraph(graph);
+    TF_Status* status = TF_NewStatus();
+    TF_CloseSession(session, status);
+    if (TF_GetCode(status) != TF_OK) {
+        std::cout<<"Error close session"<<std::endl;
+    }
+    TF_DeleteSession(session, status);
+    TF_DeleteStatus(status);
 }
