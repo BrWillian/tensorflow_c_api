@@ -15,9 +15,9 @@ void ClassTensorflow::LoadGraph(const char *modelPath)
     TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
     TF_Buffer* RunOpts = nullptr;
 
-    const char* tags[] = {tensorflow::kSavedModelTagServe};
+    const char* tags = "serve";
 
-    session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, modelPath, tags, 1, graph, nullptr, Status);
+    session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, modelPath, &tags, 1, graph, nullptr, Status);
 
     if (TF_GetCode(Status) == TF_OK){
         std::cout<<"Tensorflow model loaded...."<<std::endl;

@@ -1,7 +1,7 @@
 #ifndef CLASSTENSORFLOW_H
 #define CLASSTENSORFLOW_H
 #include <tensorflow/c/c_api.h>
-#include <tag_constants.h>
+#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <string>
 
@@ -18,13 +18,10 @@ private:
     static TF_Buffer* ReadBufferFromFile(const char* file);
     static void DeallocateBuffer(void* data, size_t);
 
+    const char* tags = "serve";
+
     TF_Session* session;
     TF_Graph* graph;
-
-    //const char* tags = "serve";
-
-
-    //static constexpr char kSavedModelTagServe[] = "serve";
 };
 
 #endif // CLASSTENSORFLOW_H
